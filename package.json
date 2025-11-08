@@ -1,7 +1,7 @@
 {
   "name": "herencia-photo-generator",
   "version": "1.0.0",
-  "description": "Generador de fotos con marco HERENCIA usando Google AI",
+  "description": "Procesador automático de fotos con marco HERENCIA usando Sharp y Google Drive",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -12,19 +12,17 @@
   },
   "keywords": [
     "imagen",
-    "google-ai",
-    "gemini",
-    "photo"
+    "photo-processing",
+    "google-drive",
+    "sharp",
+    "automation"
   ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@google-cloud/local-auth": "^3.0.1",
-    "@google/genai": "^1.29.0",
-    "@google/generative-ai": "^0.21.0",
     "dotenv": "^16.4.5",
     "googleapis": "^165.0.0",
-    "node-fetch": "^3.3.2",
     "sharp": "^0.34.5"
   }
 }

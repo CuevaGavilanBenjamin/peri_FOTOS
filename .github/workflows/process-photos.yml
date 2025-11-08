@@ -1,0 +1,72 @@
+name: Procesar Fotos HERENCIA
+
+on:
+  # Ejecutar cada 2 minutos
+  schedule:
+    - cron: '*/2 * * * *'
+  
+  # Permitir ejecución manual desde GitHub
+  workflow_dispatch:
+
+jobs:
+  process-photos:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+      
+      - name: 🟢 Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📦 Instalar dependencias
+        run: npm ci
+      
+      - name: 📁 Crear carpetas necesarias
+        run: |
+          mkdir -p input
+          mkdir -p output
+          mkdir -p temp
+      
+      - name: 🔑 Configurar credenciales de Google
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
+        run: |
+          echo "$GOOGLE_CREDENTIALS" > credentials.json
+          echo "$GOOGLE_TOKEN" > token.json
+      
+      - name: 📋 Configurar variables de entorno
+        env:
+          INPUT_FOLDER_ID: ${{ secrets.INPUT_FOLDER_ID }}
+          OUTPUT_FOLDER_ID: ${{ secrets.OUTPUT_FOLDER_ID }}
+        run: |
+          echo "INPUT_FOLDER_ID=$INPUT_FOLDER_ID" >> .env
+          echo "OUTPUT_FOLDER_ID=$OUTPUT_FOLDER_ID" >> .env
+      
+      - name: 🖼️ Descargar marco HERENCIA
+        env:
+          MARCO_URL: ${{ secrets.MARCO_URL }}
+        run: |
+          if [ -n "$MARCO_URL" ]; then
+            curl -o input/MARCO.jpg "$MARCO_URL"
+          else
+            echo "⚠️ MARCO_URL no configurado, usando marco del repositorio"
+          fi
+      
+      - name: 🎨 Procesar todas las fotos
+        run: npm run process-all
+      
+      - name: 🧹 Limpiar archivos temporales
+        if: always()
+        run: |
+          rm -f credentials.json
+          rm -f token.json
+          rm -rf temp/*
+      
+      - name: 📊 Resumen
+        if: always()
+        run: echo "✅ Procesamiento completado"
