@@ -1,0 +1,14 @@
+node_modules/
+.env
+output/*.png
+output/*.jpg
+input/*.jpg
+input/*.png
+!input/.gitkeep
+temp/
+*.log
+.DS_Store
+
+# OAuth 2.0 credentials
+credentials.json
+token.json
