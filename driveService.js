@@ -211,6 +211,23 @@ class DriveService {
       throw error;
     }
   }
+
+  /**
+   * Elimina un archivo de Drive (lo mueve a la papelera)
+   */
+  async deleteFile(fileId) {
+    try {
+      await this.drive.files.delete({
+        fileId: fileId
+      });
+      
+      return true;
+      
+    } catch (error) {
+      console.error('❌ Error al eliminar archivo:', error.message);
+      throw error;
+    }
+  }
 }
 
 export default DriveService;

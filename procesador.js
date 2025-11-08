@@ -37,6 +37,9 @@ async function procesarAsistente(driveService, codigoAsistente, inputFolderId, o
   // Buscar o crear carpeta de salida para este asistente
   const carpetaOutput = await driveService.findOrCreateFolder(codigoAsistente, outputFolderId);
 
+  // Array para guardar los IDs de las fotos originales a eliminar
+  const fotosParaEliminar = [];
+
   // Procesar cada imagen
   for (const imagen of imagenes) {
     try {
@@ -60,6 +63,9 @@ async function procesarAsistente(driveService, codigoAsistente, inputFolderId, o
       await driveService.uploadImage(tempInput, originalFileName, carpetaOutput.id);
       console.log(`  📤 Original copiada: ${originalFileName}`);
       
+      // Guardar ID para eliminar después
+      fotosParaEliminar.push({ id: imagen.id, name: imagen.name });
+      
       // Limpiar archivos temporales
       fs.unlinkSync(tempInput);
       fs.unlinkSync(tempOutput);
@@ -69,6 +75,20 @@ async function procesarAsistente(driveService, codigoAsistente, inputFolderId, o
     } catch (error) {
       console.error(`  ❌ Error procesando ${imagen.name}:`, error.message);
     }
+  }
+
+  // Eliminar fotos originales de la carpeta de entrada
+  if (fotosParaEliminar.length > 0) {
+    console.log(`\n🗑️  Limpiando carpeta de entrada...`);
+    for (const foto of fotosParaEliminar) {
+      try {
+        await driveService.deleteFile(foto.id);
+        console.log(`  🗑️  Eliminada: ${foto.name}`);
+      } catch (error) {
+        console.error(`  ❌ Error al eliminar ${foto.name}:`, error.message);
+      }
+    }
+    console.log(`✅ Carpeta de entrada limpiada (${fotosParaEliminar.length} fotos eliminadas)`);
   }
 }
 
