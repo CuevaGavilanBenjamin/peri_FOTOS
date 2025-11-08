@@ -4,6 +4,7 @@ output/*.png
 output/*.jpg
 input/*.jpg
 input/*.png
+!input/MARCO.jpg
 !input/.gitkeep
 temp/
 *.log
